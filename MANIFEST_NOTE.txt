@@ -1,0 +1,6 @@
+Android Manifest permissions to add (android/app/src/main/AndroidManifest.xml):
+
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+(The workflow below auto-inserts these lines.)

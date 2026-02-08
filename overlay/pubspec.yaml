@@ -1,0 +1,23 @@
+name: voice_tasks
+description: Voice tasks app with reminders (Arabic).
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  speech_to_text: ^6.6.0
+  flutter_local_notifications: ^17.2.2
+  timezone: ^0.9.4
+  shared_preferences: ^2.2.3
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
