@@ -1,0 +1,56 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.3'
+          cache: true
+
+      - name: Create Flutter project (if missing)
+        run: |
+          if [ ! -f "pubspec.yaml" ]; then
+            flutter create .
+          fi
+
+      - name: Apply overlay files
+        run: |
+          cp -f overlay/pubspec.yaml pubspec.yaml
+          mkdir -p lib
+          cp -f overlay/lib/main.dart lib/main.dart
+
+      - name: Add Android permissions
+        run: |
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          if [ -f "$MANIFEST" ]; then
+            # Insert permissions before <application ...> if not already present
+            grep -q 'android.permission.RECORD_AUDIO' "$MANIFEST" || \
+              sed -i 's|<application|<uses-permission android:name="android.permission.RECORD_AUDIO" />\n<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n\n<application|' "$MANIFEST"
+          fi
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
